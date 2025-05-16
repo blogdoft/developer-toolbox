@@ -1,0 +1,8 @@
+./**/*.*
+!./app/**/*.*
+!./**/*.csproj
+!./**/*.cs
+!./**/*.sln
+!.editorconfig
+!stylecop.json
+!Directory.Build.props

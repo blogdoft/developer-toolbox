@@ -1,0 +1,54 @@
+using Azure.Messaging.ServiceBus;
+using BlogDoFt.SbusEmulatorViewer.Api.Models;
+using Microsoft.Extensions.Options;
+
+namespace BlogDoFt.SbusEmulatorViewer.Api.Services.Impl;
+
+public class ServiceBusService : IServiceBusService
+{
+    private readonly ServiceBusClient _client;
+    private readonly ServiceBusSettings _settings;
+
+    public ServiceBusService(ServiceBusClient client, IOptions<ServiceBusSettings> settings)
+    {
+        _client = client;
+        _settings = settings.Value;
+    }
+
+    public async Task SendMessageAsync(string entityName, string message)
+    {
+        // Cria um sender para a fila
+        await using var sender = _client.CreateSender(entityName);
+        await sender.SendMessageAsync(new ServiceBusMessage(message));
+    }
+
+    public async Task<IEnumerable<string>> TopicReceiveMessagesAsync(
+        string entityName,
+        string subscription,
+        int maxMessages = 10,
+        CancellationToken cancellation = default)
+    {
+        await using var client = new ServiceBusClient(_settings.ConnectionString);
+        await using var receiver = client.CreateReceiver(entityName, subscription,
+            new ServiceBusReceiverOptions
+            {
+                ReceiveMode = ServiceBusReceiveMode.PeekLock,
+            });
+
+        var messages =
+            await receiver.ReceiveMessagesAsync(
+                maxMessages,
+                maxWaitTime: TimeSpan.FromSeconds(5),
+                cancellationToken: cancellation);
+
+        var list = new List<string>();
+        foreach (var msg in messages)
+        {
+            list.Add(msg.Body.ToString());
+
+            await receiver.CompleteMessageAsync(msg, cancellation);
+        }
+
+        return list;
+    }
+}

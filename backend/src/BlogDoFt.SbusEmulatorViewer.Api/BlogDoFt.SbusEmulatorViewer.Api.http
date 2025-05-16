@@ -1,0 +1,6 @@
+@BlogDoFt.SbusEmulatorViewer.Api_HostAddress = http://localhost:5139
+
+GET {{BlogDoFt.SbusEmulatorViewer.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
