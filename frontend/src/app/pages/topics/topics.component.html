@@ -1,0 +1,25 @@
+<div class="flex h-full gap-2">
+    <!-- Sidebar -->
+    <app-topic-list class="topics-bar overflow-auto"></app-topic-list>
+
+    <!-- Main content -->
+    <div class="flex-1 flex flex-col overflow-auto">
+        <div class="card flex flex-col gap-2">
+            <div class="font-semibold text-xl">Carregar mensagens</div>
+            <div class="flex flex-wrap items-start gap-2">
+                <div class="field">
+                    <label for="maxMessages" class="sr-only">Qtd de mensagens</label>
+                    <input pInputText id="maxMessages" type="text" placeholder="Qtd de mensagens" />
+                </div>
+                <p-button label="Carregar" [fluid]="false"></p-button>
+            </div>
+        </div>
+        <!-- aqui você pode colocar mais cards ou seções -->
+        <div class="flex flex-wrap">
+            <div *ngFor="let msg of messages; let i = index" class="card w-full">
+                <div class="font-semibold text-lg">Mensagem {{ i + 1 }}</div>
+                <app-json-viewer [data]="msg"></app-json-viewer>
+            </div>
+        </div>
+    </div>
+</div>
