@@ -28,6 +28,7 @@ builder.Services
         var settings = sp.GetRequiredService<IOptions<ServiceBusSettings>>().Value;
         return new ServiceBusAdministrationClient(settings.ConnectionString);
     })
+    .AddSingleton<EntitiesParser>()
     .AddScoped<IServiceBusService, ServiceBusService>();
 
 var app = builder.Build();
