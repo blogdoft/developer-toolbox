@@ -18,7 +18,7 @@ public class TopicsController : ControllerBase
     [HttpPost("{topicName}")]
     public async Task<IActionResult> SendMessageAsync(
         [FromRoute] string topicName,
-        [FromBody] string message)
+        [FromBody] object message)
     {
         await _sbusService.SendMessageAsync(topicName, message);
         return Ok();

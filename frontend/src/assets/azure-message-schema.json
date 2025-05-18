@@ -1,0 +1,67 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Azure Service Bus Message",
+    "description": "Schema para validação de uma mensagem do Azure Service Bus",
+    "type": "object",
+    "properties": {
+      "messageId": {
+        "type": "string",
+        "description": "Identificador único da mensagem"
+      },
+      "correlationId": {
+        "type": "string",
+        "description": "Id usado para correlação entre mensagens"
+      },
+      "contentType": {
+        "type": "string",
+        "description": "MIME type do conteúdo (por exemplo, 'application/json')"
+      },
+      "subject": {
+        "type": "string",
+        "description": "Assunto (label) da mensagem"
+      },
+      "replyTo": {
+        "type": "string",
+        "description": "Nome da fila/tópico para respostas"
+      },
+      "replyToSessionId": {
+        "type": "string",
+        "description": "SessionId para replies"
+      },
+      "sessionId": {
+        "type": "string",
+        "description": "SessionId para agrupamento de mensagens"
+      },
+      "to": {
+        "type": "string",
+        "description": "Destino da mensagem"
+      },
+      "timeToLive": {
+        "type": "string",
+        "pattern": "^P(T(\\d+H)?(\\d+M)?(\\d+S)?)$",
+        "description": "Tempo de vida da mensagem em ISO-8601 duration (ex: 'PT1H')"
+      },
+      "scheduledEnqueueTimeUtc": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Momento agendado para enfileirar a mensagem (UTC)"
+      },
+      "applicationProperties": {
+        "type": "object",
+        "description": "Propriedades customizadas definidas pelo aplicativo",
+        "additionalProperties": {
+          "type": ["string", "number", "boolean", "object", "array", "null"]
+        }
+      },
+      "body": {
+        "description": "Conteúdo da mensagem (já desserializado)",
+        "oneOf": [
+          { "type": "string" },
+          { "type": "object" },
+          { "type": "array" }
+        ]
+      }
+    },
+    "required": ["messageId", "body"],
+    "additionalProperties": false
+  }

@@ -1,6 +1,7 @@
 using Azure.Messaging.ServiceBus;
 using BlogDoFt.SbusEmulatorViewer.Api.Models;
 using Microsoft.Extensions.Options;
+using System.Text.Json;
 
 namespace BlogDoFt.SbusEmulatorViewer.Api.Services.Impl;
 
@@ -15,14 +16,14 @@ public class ServiceBusService : IServiceBusService
         _settings = settings.Value;
     }
 
-    public async Task SendMessageAsync(string entityName, string message)
+    public async Task SendMessageAsync(string entityName, object message)
     {
         // Cria um sender para a fila
         await using var sender = _client.CreateSender(entityName);
-        await sender.SendMessageAsync(new ServiceBusMessage(message));
+        await sender.SendMessageAsync(new ServiceBusMessage(JsonSerializer.Serialize(message)));
     }
 
-    public async Task<IEnumerable<string>> TopicReceiveMessagesAsync(
+    public async Task<IEnumerable<object>> TopicReceiveMessagesAsync(
         string entityName,
         string subscription,
         int maxMessages = 10,
@@ -41,14 +42,26 @@ public class ServiceBusService : IServiceBusService
                 maxWaitTime: TimeSpan.FromSeconds(5),
                 cancellationToken: cancellation);
 
-        var list = new List<string>();
+        var list = new List<object>();
         foreach (var msg in messages)
         {
-            list.Add(msg.Body.ToString());
+            var msgDetails = new
+            {
+                Details = msg,
+                Body = JsonSerializer.Deserialize<object>(msg.Body.ToString()),
+            };
+            list.Add(msgDetails);
 
             await receiver.CompleteMessageAsync(msg, cancellation);
         }
 
         return list;
     }
+}
+
+
+public class MessageDetails
+{
+    public object? Body { get; set; }
+    public object? Details { get; set; }
 }
