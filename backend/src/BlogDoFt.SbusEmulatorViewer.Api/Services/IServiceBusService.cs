@@ -2,9 +2,9 @@ namespace BlogDoFt.SbusEmulatorViewer.Api.Services;
 
 public interface IServiceBusService
 {
-    Task SendMessageAsync(string entityName, string message);
+    Task SendMessageAsync(string entityName, object message);
 
-    Task<IEnumerable<string>> TopicReceiveMessagesAsync(
+    Task<IEnumerable<object>> TopicReceiveMessagesAsync(
         string entityName,
         string subscription,
         int maxMessages = 10,
