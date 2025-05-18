@@ -8,5 +8,5 @@
     <ngx-json-viewer [json]="data"></ngx-json-viewer>
 </div>
 <div *ngIf="viewMode === 'text'">
-    <pre class="bg-gray-100 rounded">{{ data | json }}</pre>
+    <pre class="border border-gray-200 p-3 rounded">{{ data | json }}</pre>
 </div>

@@ -1,4 +1,6 @@
-# Sakai19
+# SBUS Emulator client
+
+This project is based on (Sakai Template)[https://github.com/primefaces/sakai-ng]
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.0.6.
 
