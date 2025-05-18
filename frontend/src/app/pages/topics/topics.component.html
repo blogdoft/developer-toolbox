@@ -1,3 +1,4 @@
+<p-toast></p-toast>
 <div class="flex h-full gap-2">
     <!-- Sidebar -->
     <app-topic-list class="topics-bar overflow-auto" (OnEntitySelected)="onSelectEntity($event)"></app-topic-list>
@@ -11,8 +12,8 @@
             </div>
             <p-tabs (valueChange)="onTabChange($event)">
                 <p-tablist value="1">
-                    <p-tab value="0" [disabled]="!canLoad">Load messages</p-tab>
-                    <p-tab value="1" [disabled]="!canLoad">Send messages</p-tab>
+                    <p-tab value="0" [disabled]="selectedEntity == undefined">Load messages</p-tab>
+                    <p-tab value="1" [disabled]="selectedEntity == undefined">Send messages</p-tab>
                 </p-tablist>
                 <p-tabpanels>
                     <p-tabpanel value="0">

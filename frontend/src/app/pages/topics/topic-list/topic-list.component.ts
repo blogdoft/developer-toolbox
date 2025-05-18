@@ -1,18 +1,22 @@
-import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
-import { NodeService } from '../../service/node.service';
 import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MessageService, TreeNode } from 'primeng/api';
+import { MessageModule } from 'primeng/message';
 import { TreeModule, TreeNodeSelectEvent } from 'primeng/tree';
 import { TreeTableModule } from 'primeng/treetable';
-import { TreeNode } from 'primeng/api';
+
 import { EntitiesService, Topic } from '../../../services/entities.service';
+import { MessageHandlerService } from '../../../shared/services/message-handler.service';
+import { NodeService } from '../../service/node.service';
 
 @Component({
     selector: 'app-topic-list',
-    imports: [CommonModule, FormsModule, TreeModule, TreeTableModule],
+    standalone: true,
+    imports: [CommonModule, FormsModule, MessageModule, TreeModule, TreeTableModule],
     templateUrl: './topic-list.component.html',
     styleUrl: './topic-list.component.scss',
-    providers: [NodeService]
+    providers: [NodeService, MessageHandlerService, MessageService]
 })
 export class TopicListComponent implements OnInit {
     @Output() OnEntitySelected = new EventEmitter<EntityNode>();
@@ -21,6 +25,7 @@ export class TopicListComponent implements OnInit {
     selectedNode?: TreeNode;
 
     entitiesService = inject(EntitiesService);
+    messageHandler = inject(MessageHandlerService);
 
     ngOnInit(): void {
         this.entitiesService.getEntities().subscribe({
