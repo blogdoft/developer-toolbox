@@ -14,7 +14,7 @@
     align-items: center;
 
     .layout-topbar-logo-container {
-        width: 20rem;
+        width: 25rem;
         display: flex;
         align-items: center;
     }
@@ -22,14 +22,15 @@
     .layout-topbar-logo {
         display: inline-flex;
         align-items: center;
-        font-size: 1.5rem;
+        font-size: clamp(1rem, 2vw, 1.5rem);
         border-radius: var(--content-border-radius);
         color: var(--text-color);
         font-weight: 500;
         gap: 0.5rem;
 
-        svg {
-            width: 3rem;
+        svg,
+        img {
+            width: clamp(2rem, 4vw, 3rem);
         }
 
         &:focus-visible {
