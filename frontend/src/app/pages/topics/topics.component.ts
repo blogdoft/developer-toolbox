@@ -1,30 +1,30 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, inject, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { DividerModule } from 'primeng/divider';
 import { InputNumber, InputNumberModule } from 'primeng/inputnumber';
+import { MessageModule } from 'primeng/message';
 import { TabsModule } from 'primeng/tabs';
 import { TextareaModule } from 'primeng/textarea';
+import { ToastModule } from 'primeng/toast';
 import { finalize } from 'rxjs/operators';
 
 import { TopicsService } from '../../services/topics.service';
+import { MessageHandlerService } from '../../shared/services/message-handler.service';
 import { EntityNode, TopicListComponent } from './topic-list/topic-list.component';
 import { JsonViewerComponent } from './topic-message-list/topic-message-list.component';
 
 @Component({
     selector: 'app-topics',
-    imports: [CommonModule, TopicListComponent, InputNumberModule, ButtonModule, FormsModule, JsonViewerComponent, TextareaModule, DividerModule, TabsModule],
+    standalone: true,
+    imports: [CommonModule, TopicListComponent, InputNumberModule, ButtonModule, FormsModule, JsonViewerComponent, MessageModule, TextareaModule, DividerModule, TabsModule, ToastModule],
     templateUrl: './topics.component.html',
-    styleUrl: './topics.component.scss'
+    styleUrl: './topics.component.scss',
+    providers: [MessageHandlerService, MessageService]
 })
 export class TopicsComponent {
-    @ViewChild('messageInput', { static: false })
-    private messageInput?: ElementRef<HTMLTextAreaElement>;
-
-    @ViewChild('maxMessagesInput', { static: false })
-    private maxMessagesInput!: InputNumber;
-
     protected selectedEntity?: EntityNode;
     protected messages: string[] = [];
     protected canLoad: boolean = false;
@@ -32,6 +32,13 @@ export class TopicsComponent {
     protected message: string = '';
 
     private topicsService = inject(TopicsService);
+    private messageHandler = inject(MessageHandlerService);
+
+    @ViewChild('messageInput', { static: false })
+    private messageInput?: ElementRef<HTMLTextAreaElement>;
+
+    @ViewChild('maxMessagesInput', { static: false })
+    private maxMessagesInput!: InputNumber;
 
     protected onSelectEntity(entityNode: EntityNode): void {
         this.canLoad = false;
@@ -51,8 +58,14 @@ export class TopicsComponent {
             .subscribe({
                 next: (data: string[]) => {
                     this.messages = data;
+                    if (this.message.length === 0) {
+                        this.messageHandler.addSuccess('Successfull loading, but the topic is empty');
+                        return;
+                    }
+
+                    this.messageHandler.addSuccess('Successfull loading!');
                 },
-                error: (err) => console.log(err)
+                error: (err) => this.messageHandler.handleHttpError(err, 'Error loading messages.')
             });
     }
 
@@ -66,8 +79,8 @@ export class TopicsComponent {
             .sendMessage(this.selectedEntity!.owner!.name, this.message)
             .pipe(finalize(() => (this.canLoad = true)))
             .subscribe({
-                next: (data) => console.log(data),
-                error: (err) => console.log(err)
+                next: (data) => this.messageHandler.addSuccess('Message sent successfully!'),
+                error: (err) => this.messageHandler.handleHttpError(err, 'Error sending message')
             });
     }
 
