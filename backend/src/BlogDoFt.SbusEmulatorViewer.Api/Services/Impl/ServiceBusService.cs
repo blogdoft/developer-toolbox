@@ -59,9 +59,9 @@ public class ServiceBusService : IServiceBusService
     }
 }
 
-
 public class MessageDetails
 {
     public object? Body { get; set; }
+
     public object? Details { get; set; }
 }

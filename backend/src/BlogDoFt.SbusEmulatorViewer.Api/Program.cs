@@ -1,10 +1,14 @@
 using Azure.Messaging.ServiceBus;
 using Azure.Messaging.ServiceBus.Administration;
+using BlogDoFt.SbusEmulatorViewer.Api.Features.Secrets;
 using BlogDoFt.SbusEmulatorViewer.Api.Models;
 using BlogDoFt.SbusEmulatorViewer.Api.Services;
 using BlogDoFt.SbusEmulatorViewer.Api.Services.Impl;
+using FluentMigrator.Runner;
 using Microsoft.Extensions.Options;
+using Npgsql;
 using Scalar.AspNetCore;
+using System.Data;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -27,6 +31,19 @@ builder.Services
     .Configure<ServiceBusSettings>(builder.Configuration.GetSection("ServiceBus"));
 
 builder.Services
+    .AddSingleton<IDbConnection>(sp =>
+    {
+        var connectionStringBuilder = new NpgsqlConnectionStringBuilder(
+            builder.Configuration.GetConnectionString("Default"));
+
+        return new NpgsqlConnection(connectionStringBuilder.ConnectionString);
+    })
+    .AddFluentMigratorCore()
+        .ConfigureRunner(rb => rb
+            .AddPostgres15_0()
+            .WithGlobalConnectionString(builder.Configuration.GetConnectionString("Default"))
+            .ScanIn(typeof(Program).Assembly).For.Migrations())
+        .AddLogging(lb => lb.AddFluentMigratorConsole())
     .AddSingleton(sp =>
     {
         var settings = sp.GetRequiredService<IOptions<ServiceBusSettings>>().Value;
@@ -38,8 +55,8 @@ builder.Services
         return new ServiceBusAdministrationClient(settings.ConnectionString);
     })
     .AddSingleton<EntitiesParser>()
-    .AddScoped<IServiceBusService, ServiceBusService>();
-
+    .AddScoped<IServiceBusService, ServiceBusService>()
+    .AddSecretsFeature();
 
 builder.Services.AddCors(opts =>
     opts.AddDefaultPolicy(policy =>
@@ -49,6 +66,13 @@ builder.Services.AddCors(opts =>
             .AllowAnyHeader()));
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var runner = scope.ServiceProvider.GetRequiredService<IMigrationRunner>();
+
+    runner.MigrateUp();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
