@@ -2,7 +2,6 @@ using BlogDoFt.SbusEmulatorViewer.Api.Features.Secrets.Impl;
 using BlogDoFt.SbusEmulatorViewer.Api.Features.Secrets.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
-using System.Text;
 
 namespace BlogDoFt.SbusEmulatorViewer.Api.Features.Secrets;
 
@@ -35,15 +34,19 @@ public class SecretsController : ControllerBase
 
         var (fileName, decryptedStream) = await _criptographyService.DecryptAsync(table);
 
-        return Ok(new SecretResponse()
-        {
-            Id = id,
-            FileName = fileName,
-            Content = Encoding.UTF8.GetString(decryptedStream.ToArray()),
-        });
+        return Ok(SecretResponse.From(id: id, fileName: fileName, stream: decryptedStream));
+    }
+
+    [HttpGet]
+    [ProducesResponseType(type: typeof(SecretLookupResponse[]), statusCode: StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetAllAsync()
+    {
+        var result = await _repository.AllAsync();
+        return Ok(result.Select(SecretLookupResponse.From));
     }
 
     [HttpPost]
+    [ProducesResponseType(type: typeof(SecretResponse[]), statusCode: StatusCodes.Status201Created)]
     public async Task<IActionResult> SaveSecretAsync([FromBody] SecretSaveModel secret)
     {
         var (text, iv) = _criptographyService.Encrypt(secret);
@@ -56,5 +59,19 @@ public class SecretsController : ControllerBase
             routeName: nameof(QuerySecretByIdAsync),
             routeValues: new { id },
             value: null);
+    }
+
+    [HttpDelete("{id}")]
+    [ProducesResponseType(statusCode: StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> DeleteAsync([FromRoute] Guid id)
+    {
+        var success = await _repository.Delete(id);
+
+        if (success)
+        {
+            return NoContent();
+        }
+
+        return NotFound();
     }
 }
