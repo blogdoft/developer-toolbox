@@ -13,6 +13,30 @@ internal class SecretRepository : ISecretRepository
         _db = db;
     }
 
+    public async Task<IEnumerable<SecretsTable>> AllAsync()
+    {
+        var sql =
+            """ 
+                SELECT id
+                     , navigation_id as NavigationId
+                     , file_name as FileName
+                FROM public.encrypted_files;
+            """;
+
+        var result = await _db.QueryAsync<SecretsTable>(sql);
+
+        return result;
+    }
+
+    public async Task<bool> Delete(Guid id)
+    {
+        var sql = "delete from public.encrypted_files where navigation_id = @NavigationId";
+
+        var affectedRecords = await _db.ExecuteAsync(sql, new { NavigationId = id });
+
+        return affectedRecords == 1;
+    }
+
     public async Task<SecretsTable?> QueryById(Guid navigationId)
     {
         var sql =
