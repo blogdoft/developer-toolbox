@@ -1,0 +1,51 @@
+<p-toast></p-toast>
+<div class="flex h-full gap-2">
+    <!-- Sidebar -->
+    <app-topic-list class="topics-bar h-full" (OnEntitySelected)="onSelectEntity($event)"></app-topic-list>
+
+    <!-- Main content -->
+    <div class="flex-1 flex flex-col overflow-auto">
+        <div class="card">
+            <div class="font-semibold text-xl mb-4">
+                {{ selectedEntity?.name || 'Select an Entity first' }}
+                {{ selectedEntity?.owner?.name ? ' at ' + selectedEntity?.owner?.name : '' }}
+            </div>
+            <p-tabs (valueChange)="onTabChange($event)">
+                <p-tablist value="1">
+                    <p-tab value="0" [disabled]="selectedEntity == undefined">Load messages</p-tab>
+                    <p-tab value="1" [disabled]="selectedEntity == undefined">Send messages</p-tab>
+                </p-tablist>
+                <p-tabpanels>
+                    <p-tabpanel value="0">
+                        <div class="card flex flex-col gap-2">
+                            <div class="flex flex-wrap items-start gap-2">
+                                <div class="field">
+                                    <label for="maxMessages" class="sr-only">Max messages</label>
+                                    <p-inputnumber #maxMessagesInput id="maxMessages" [(ngModel)]="maxMessages" min="1" />
+                                </div>
+                                <p-button label="Load" [fluid]="false" [disabled]="!canLoad" (onClick)="load($event)"></p-button>
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap">
+                            <div *ngFor="let msg of messages; let i = index" class="card w-full">
+                                <p-divider />
+                                <div class="font-semibold text-lg">Message {{ i + 1 }}</div>
+                                <app-json-viewer [data]="msg"></app-json-viewer>
+                            </div>
+                        </div>
+                    </p-tabpanel>
+                    <p-tabpanel value="1">
+                        <div class="flex flex-col">
+                            <div class="flex">
+                                <textarea #messageInput pTextarea placeholder="Your Message" [autoResize]="true" rows="25" cols="80" class="w-full" [(ngModel)]="message"></textarea>
+                            </div>
+                            <div class="mt-2 flex justify-end">
+                                <p-button label="Post" [fluid]="false" [disabled]="!canSend()" (onClick)="send($event)"></p-button>
+                            </div>
+                        </div>
+                    </p-tabpanel>
+                </p-tabpanels>
+            </p-tabs>
+        </div>
+    </div>
+</div>

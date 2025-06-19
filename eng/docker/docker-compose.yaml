@@ -1,0 +1,83 @@
+name: sbus_emulator
+services:
+  emulator:
+    container_name: "emulator"
+    image: mcr.microsoft.com/azure-messaging/servicebus-emulator:latest
+    pull_policy: always
+    volumes:
+      - "${CONFIG_PATH}:${SbusEmulatorConfigPath}"
+    ports:
+      - "5672:5672"
+      - "5300:5300"
+    environment:
+      SQL_SERVER: sqledge
+      MSSQL_SA_PASSWORD: "${MSSQL_SA_PASSWORD}" # Password should be same as what is set for SQL Edge  
+      ACCEPT_EULA: ${ACCEPT_EULA}
+      SQL_WAIT_INTERVAL: ${SQL_WAIT_INTERVAL} # Optional: Time in seconds to wait for SQL to be ready (default is 15 seconds)
+    depends_on:
+      - sqledge
+    networks:
+      sb-emulator:
+        aliases:
+          - "sb-emulator"
+
+  sqledge:
+    container_name: "sqledge"
+    image: "mcr.microsoft.com/azure-sql-edge:latest"
+    networks:
+      sb-emulator:
+        aliases:
+          - "sqledge"
+    environment:
+      ACCEPT_EULA: ${ACCEPT_EULA}
+      MSSQL_SA_PASSWORD: "${MSSQL_SA_PASSWORD}" # To be filled by user as per policy : https://learn.microsoft.com/en-us/sql/relational-databases/security/strong-passwords?view=sql-server-linux-ver16 
+
+  backend:
+    container_name: backend
+    build:
+      context: ../../backend/
+      dockerfile: ./eng/docker/dockerfile
+    env_file:
+      - backend.env
+    volumes:
+      - "${CONFIG_PATH}:${SbusEmulatorConfigPath}"
+    networks:
+      sb-emulator:
+        aliases:
+          - "sqledge"
+    depends_on:
+      - emulator
+
+  frontend:
+    container_name: frontend
+    build:
+      context: ../../frontend/
+      dockerfile: ./eng/docker/dockerfile
+    networks:
+      sb-emulator:
+        aliases:
+          - "sqledge"
+    depends_on:
+      - backend
+    ports:
+      - "4300:4300"
+
+  reverse-proxy:
+    build:
+      context: .
+      dockerfile: ./nginx.dockerfile
+    container_name: reverse-proxy
+    mem_limit: 128m
+    cpus: 0.5
+    networks:
+      sb-emulator:
+        aliases:
+          - "sqledge"
+    depends_on:
+      - backend
+      - frontend
+    ports:
+      - "8080:8080"
+
+networks:
+  sb-emulator:

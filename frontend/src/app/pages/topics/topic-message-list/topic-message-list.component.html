@@ -1,0 +1,12 @@
+<div class="flex justify-end gap-2">
+    <button pButton type="button" icon="pi pi-sync" (click)="toggleView()">
+        {{ viewMode === 'tree' ? 'Text plain' : 'Structured' }}
+    </button>
+    <button pButton type="button" icon="pi pi-copy" (click)="copy()">Copy</button>
+</div>
+<div *ngIf="viewMode === 'tree'">
+    <ngx-json-viewer [json]="data"></ngx-json-viewer>
+</div>
+<div *ngIf="viewMode === 'text'">
+    <pre class="border border-gray-200 p-3 rounded">{{ data | json }}</pre>
+</div>
