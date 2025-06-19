@@ -49,11 +49,11 @@ public class SecretsController : ControllerBase
     [ProducesResponseType(type: typeof(SecretResponse[]), statusCode: StatusCodes.Status201Created)]
     public async Task<IActionResult> SaveSecretAsync([FromBody] SecretSaveModel secret)
     {
-        var (text, iv) = _criptographyService.Encrypt(secret);
+        var (content, iv) = _criptographyService.Encrypt(secret);
 
-        var id = await _repository.SaveAsync(text, iv, secret.FileName);
+        var id = await _repository.SaveAsync(content, iv, secret.FileName);
 
-        await text.DisposeAsync();
+        await content.DisposeAsync();
 
         return CreatedAtRoute(
             routeName: nameof(QuerySecretByIdAsync),

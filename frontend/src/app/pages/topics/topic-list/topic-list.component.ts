@@ -32,7 +32,7 @@ export class TopicListComponent implements OnInit {
             next: (data) => {
                 this.treeValue = this.buildTree(data);
             },
-            error: (err) => console.log(err)
+            error: (err) => this.messageHandler.handleHttpError(err)
         });
     }
 
