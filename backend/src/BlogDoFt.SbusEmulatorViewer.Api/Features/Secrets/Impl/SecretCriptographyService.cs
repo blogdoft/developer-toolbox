@@ -29,7 +29,7 @@ internal class SecretCriptographyService : ISecretCriptographyService
         return (model.FileName ?? "unspecified", decryptedStream);
     }
 
-    public (MemoryStream Text, byte[] IV) Encrypt(SecretSaveModel model)
+    public (MemoryStream Content, byte[] IV) Encrypt(SecretSaveModel model)
     {
         var iv = new byte[16];
         MemoryStream memoryStream = new();
@@ -43,7 +43,7 @@ internal class SecretCriptographyService : ISecretCriptographyService
 
             using CryptoStream cryptoStream = new(memoryStream, encryptor, CryptoStreamMode.Write);
             using StreamWriter streamWriter = new(cryptoStream);
-            streamWriter.Write(model.Text);
+            streamWriter.Write(model.Content);
         }
 
         return (memoryStream, iv);
