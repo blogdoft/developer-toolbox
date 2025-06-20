@@ -2,7 +2,6 @@ using BlogDoFt.SbusEmulatorViewer.Api.Extensions;
 using BlogDoFt.SbusEmulatorViewer.Api.Features.Secrets.Impl;
 using BlogDoFt.SbusEmulatorViewer.Api.Features.Secrets.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Net.Http.Headers;
 using System.Net.Mime;
 
 namespace BlogDoFt.SbusEmulatorViewer.Api.Features.Secrets;

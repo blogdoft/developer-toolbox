@@ -3,7 +3,7 @@ using BlogDoFt.SbusEmulatorViewer.Api.Models;
 using Microsoft.Extensions.Options;
 using System.Text.Json;
 
-namespace BlogDoFt.SbusEmulatorViewer.Api.Services.Impl;
+namespace BlogDoFt.SbusEmulatorViewer.Api.Features.ServiceBus.Impl;
 
 public class ServiceBusService : IServiceBusService
 {
@@ -30,7 +30,9 @@ public class ServiceBusService : IServiceBusService
         CancellationToken cancellation = default)
     {
         await using var client = new ServiceBusClient(_settings.ConnectionString);
-        await using var receiver = client.CreateReceiver(entityName, subscription,
+        await using var receiver = client.CreateReceiver(
+            entityName,
+            subscription,
             new ServiceBusReceiverOptions
             {
                 ReceiveMode = ServiceBusReceiveMode.PeekLock,
@@ -57,11 +59,4 @@ public class ServiceBusService : IServiceBusService
 
         return list;
     }
-}
-
-public class MessageDetails
-{
-    public object? Body { get; set; }
-
-    public object? Details { get; set; }
 }

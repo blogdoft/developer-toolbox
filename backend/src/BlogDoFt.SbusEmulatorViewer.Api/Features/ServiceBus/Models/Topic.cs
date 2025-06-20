@@ -1,3 +1,3 @@
-namespace BlogDoFt.SbusEmulatorViewer.Api.Models;
+namespace BlogDoFt.SbusEmulatorViewer.Api.Features.ServiceBus.Models;
 
 public record Topic(string TopicName, IReadOnlyList<string> Subscriptions);
