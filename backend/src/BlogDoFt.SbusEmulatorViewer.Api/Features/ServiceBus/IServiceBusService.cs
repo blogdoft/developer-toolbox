@@ -1,4 +1,4 @@
-namespace BlogDoFt.SbusEmulatorViewer.Api.Services;
+namespace BlogDoFt.SbusEmulatorViewer.Api.Features.ServiceBus;
 
 public interface IServiceBusService
 {

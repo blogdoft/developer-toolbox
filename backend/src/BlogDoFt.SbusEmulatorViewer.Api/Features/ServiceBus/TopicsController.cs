@@ -1,7 +1,6 @@
-using BlogDoFt.SbusEmulatorViewer.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BlogDoFt.SbusEmulatorViewer.Api.Controllers;
+namespace BlogDoFt.SbusEmulatorViewer.Api.Features.ServiceBus;
 
 [ApiController]
 [Route("api/[controller]")]

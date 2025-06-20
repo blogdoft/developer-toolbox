@@ -1,9 +1,10 @@
 using Azure.Messaging.ServiceBus;
 using Azure.Messaging.ServiceBus.Administration;
 using BlogDoFt.SbusEmulatorViewer.Api.Features.Secrets;
+using BlogDoFt.SbusEmulatorViewer.Api.Features.ServiceBus;
+using BlogDoFt.SbusEmulatorViewer.Api.Features.ServiceBus.Impl;
+using BlogDoFt.SbusEmulatorViewer.Api.Features.ServiceBus.Models;
 using BlogDoFt.SbusEmulatorViewer.Api.Models;
-using BlogDoFt.SbusEmulatorViewer.Api.Services;
-using BlogDoFt.SbusEmulatorViewer.Api.Services.Impl;
 using FluentMigrator.Runner;
 using Microsoft.Extensions.Options;
 using Npgsql;
@@ -96,4 +97,4 @@ app
     .UseRouting()
     .UseEndpoints(endpoints => endpoints.MapControllers());
 
-app.Run();
+await app.RunAsync();
