@@ -16,8 +16,8 @@ import { LayoutService } from '../service/layout.service';
                 <i class="pi pi-bars"></i>
             </button>
             <a class="layout-topbar-logo" routerLink="/">
-                <img src="favicon.png" ariaLabel="Pull Request Insights logo" alt="Pull Request Insights logo" />
-                <span>Sbus Emulator Visualizer</span>
+                <img src="logo.png" ariaLabel="Pull Request Insights logo" alt="Pull Request Insights logo" />
+                <span>Developer Toolbox</span>
             </a>
         </div>
 
