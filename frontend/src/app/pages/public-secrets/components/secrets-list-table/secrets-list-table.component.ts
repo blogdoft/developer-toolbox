@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, output, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { TableModule, TableRowSelectEvent } from 'primeng/table';
@@ -19,6 +19,8 @@ export class SecretsListTableComponent {
 
     @Output() onDeleteClick = new EventEmitter<SecretsFileLookup>();
 
+    @Output() onDownloadClick = new EventEmitter<SecretsFileLookup>();
+
     protected selectedRow?: SecretsFileLookup | SecretsFileLookup[];
 
     public clearSelection() {
@@ -30,7 +32,11 @@ export class SecretsListTableComponent {
         this.onFileSelected.emit(selectedSecretsFile);
     }
 
-    public deleteClickHandle(secretsFile: SecretsFileLookup) {
+    protected deleteClickHandle(secretsFile: SecretsFileLookup) {
         this.onDeleteClick.emit(secretsFile);
+    }
+
+    protected downloadClickHandle(secretsFile: SecretsFileLookup) {
+        this.onDownloadClick.emit(secretsFile);
     }
 }

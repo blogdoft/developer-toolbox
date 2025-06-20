@@ -1,6 +1,8 @@
+using BlogDoFt.SbusEmulatorViewer.Api.Extensions;
 using BlogDoFt.SbusEmulatorViewer.Api.Features.Secrets.Impl;
 using BlogDoFt.SbusEmulatorViewer.Api.Features.Secrets.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Http.Headers;
 using System.Net.Mime;
 
 namespace BlogDoFt.SbusEmulatorViewer.Api.Features.Secrets;
@@ -11,6 +13,7 @@ namespace BlogDoFt.SbusEmulatorViewer.Api.Features.Secrets;
 [Consumes(MediaTypeNames.Application.Json)]
 public class SecretsController : ControllerBase
 {
+    private const string NonSupportedMidia = "{0} is not supported";
     private readonly ISecretCriptographyService _criptographyService;
     private readonly ISecretRepository _repository;
 
@@ -23,6 +26,8 @@ public class SecretsController : ControllerBase
     }
 
     [HttpGet(template: "{id}", Name = "QuerySecretByIdAsync")]
+    [Produces(MediaTypeNames.Text.Plain, MediaTypeNames.Application.Json, MediaTypeNames.Multipart.Mixed)]
+
     [ProducesResponseType(type: typeof(SecretResponse), statusCode: StatusCodes.Status201Created)]
     public async Task<IActionResult> QuerySecretByIdAsync([FromRoute] Guid id)
     {
@@ -34,7 +39,23 @@ public class SecretsController : ControllerBase
 
         var (fileName, decryptedStream) = await _criptographyService.DecryptAsync(table);
 
-        return Ok(SecretResponse.From(id: id, fileName: fileName, stream: decryptedStream));
+        return HttpContext.Request.GetTypedHeaders().Accept switch
+        {
+            var accept when accept.Includes(MediaTypeNames.Text.Plain) => File(
+                decryptedStream.ToArray(),
+                MediaTypeNames.Text.Plain,
+                fileName),
+            var accept when accept.Includes(MediaTypeNames.Application.Json) => Ok(
+                    SecretResponse.From(id: id, fileName: fileName, stream: decryptedStream)),
+            _ => BadRequest(new ProblemDetails()
+            {
+                Type = "Bad Request",
+                Title = "Invalid Request data",
+                Detail = string.Format(
+                    NonSupportedMidia,
+                    string.Join(',', HttpContext.Request.GetTypedHeaders().Accept.Select(a => a.MediaType.Value))),
+            }),
+        };
     }
 
     [HttpGet]

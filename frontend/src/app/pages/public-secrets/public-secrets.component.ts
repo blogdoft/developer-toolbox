@@ -78,6 +78,22 @@ export class PublicSecretsComponent implements OnInit {
             });
     }
 
+    protected downloadFile(secretsFile: SecretsFileLookup) {
+        this.secretFileService.downloadFile(secretsFile).subscribe({
+            next: (data) => {
+                const blob = new Blob([data.body!], { type: 'text/plain' });
+
+                const a = document.createElement('a');
+                const url = window.URL.createObjectURL(blob);
+                a.href = url;
+                a.download = secretsFile.fileName;
+                a.click();
+                a.remove();
+            },
+            error: (err) => this.messageHandler.handleHttpError(err)
+        });
+    }
+
     protected onSaveNewSecret(newSecret: NewSecretsFile): void {
         this.secretFileService
             .save(newSecret)
