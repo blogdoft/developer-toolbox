@@ -62,7 +62,7 @@ RUN dotnet restore --use-lock-file
 COPY . ./
 
 # Publish trimmed release build
-RUN dotnet publish src/BlogDoFt.SbusEmulatorViewer.Api/BlogDoFt.SbusEmulatorViewer.Api.csproj \
+RUN dotnet publish src/BlogDoFt.DeveloperToolbox.Api/BlogDoFt.DeveloperToolbox.Api.csproj \
     -c Release \
     --self-contained false \
     --no-restore \
@@ -80,7 +80,7 @@ COPY --from=builder /app/publish ./
 
 # Expose default port and set entrypoint
 EXPOSE 80
-ENTRYPOINT ["dotnet", "BlogDoFt.SbusEmulatorViewer.Api.dll"]
+ENTRYPOINT ["dotnet", "BlogDoFt.DeveloperToolbox.Api.dll"]
 EOF
 
 echo "Dockerfile generated at: $DOCKERFILE"

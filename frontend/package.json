@@ -1,5 +1,5 @@
 {
-    "name": "sbus-emulator-frontend",
+    "name": "developer-toolbox-frontend",
     "version": "1.0.0",
     "scripts": {
         "ng": "ng",

@@ -5,9 +5,9 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS builder
 WORKDIR /src
 
 # Copy only solution and project files (preserving structure) to leverage caching
-COPY sbus-emulator-viewer.sln sbus-emulator-viewer.sln
-COPY __tests__/BlogDoFt.SbusEmulatorViewer.Api/BlogDoFt.SbusEmulatorViewer.Api.csproj __tests__/BlogDoFt.SbusEmulatorViewer.Api/BlogDoFt.SbusEmulatorViewer.Api.csproj
-COPY src/BlogDoFt.SbusEmulatorViewer.Api/BlogDoFt.SbusEmulatorViewer.Api.csproj src/BlogDoFt.SbusEmulatorViewer.Api/BlogDoFt.SbusEmulatorViewer.Api.csproj
+COPY developer-toolbox.sln developer-toolbox.sln
+COPY __tests__/BlogDoFt.DeveloperToolbox.Api/BlogDoFt.DeveloperToolbox.Api.csproj __tests__/BlogDoFt.DeveloperToolbox.Api/BlogDoFt.DeveloperToolbox.Api.csproj
+COPY src/BlogDoFt.DeveloperToolbox.Api/BlogDoFt.DeveloperToolbox.Api.csproj src/BlogDoFt.DeveloperToolbox.Api/BlogDoFt.DeveloperToolbox.Api.csproj
 
 # Restore dependencies with locked file
 RUN dotnet restore --use-lock-file
@@ -16,7 +16,7 @@ RUN dotnet restore --use-lock-file
 COPY . ./
 
 # Publish trimmed release build
-RUN dotnet publish src/BlogDoFt.SbusEmulatorViewer.Api/BlogDoFt.SbusEmulatorViewer.Api.csproj \
+RUN dotnet publish src/BlogDoFt.DeveloperToolbox.Api/BlogDoFt.DeveloperToolbox.Api.csproj \
     -c Release \
     --self-contained false \
     --no-restore \
@@ -34,4 +34,4 @@ COPY --from=builder /app/publish ./
 
 # Expose default port and set entrypoint
 EXPOSE 80
-ENTRYPOINT ["dotnet", "BlogDoFt.SbusEmulatorViewer.Api.dll"]
+ENTRYPOINT ["dotnet", "BlogDoFt.DeveloperToolbox.Api.dll"]

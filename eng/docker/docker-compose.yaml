@@ -5,7 +5,7 @@ services:
     image: mcr.microsoft.com/azure-messaging/servicebus-emulator:latest
     pull_policy: always
     volumes:
-      - "${CONFIG_PATH}:${SbusEmulatorConfigPath}"
+      - "${CONFIG_PATH}:${DeveloperToolboxConfigPath}"
     ports:
       - "5672:5672"
       - "5300:5300"
@@ -40,7 +40,7 @@ services:
     env_file:
       - backend.env
     volumes:
-      - "${CONFIG_PATH}:${SbusEmulatorConfigPath}"
+      - "${CONFIG_PATH}:${DeveloperToolboxConfigPath}"
     networks:
       sb-emulator:
         aliases:
