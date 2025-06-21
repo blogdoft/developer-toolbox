@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -31,6 +31,19 @@ export class SecretsFilesService {
     delete(id: string): Observable<void> {
         const url = `${this.secretsFileEndpoint}/${encodeURIComponent(id)}`;
         return this.http.delete<void>(url);
+    }
+
+    downloadFile(secretsFile: SecretsFileLookup): Observable<HttpResponse<Blob>> {
+        const url = `${this.secretsFileEndpoint}/${encodeURIComponent(secretsFile.id)}`;
+        const headers = new HttpHeaders({
+            Accept: 'text/plain'
+        });
+
+        return this.http.get(url, {
+            headers: headers,
+            responseType: 'blob',
+            observe: 'response'
+        });
     }
 }
 

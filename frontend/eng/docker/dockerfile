@@ -15,6 +15,6 @@ COPY ./eng/docker/nginx-default.conf /etc/nginx/conf.d/default.conf
 COPY ./eng/docker/nginx-start.sh .
 
 # Copy website
-COPY --from=build /src/dist/sbus-emulator-frontend/browser /usr/share/nginx/html
+COPY --from=build /src/dist/developer-toolbox-frontend/browser /usr/share/nginx/html
 
 ENTRYPOINT ["sh", "nginx-start.sh"]

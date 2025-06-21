@@ -36,26 +36,26 @@ jobs:
         run: |
           docker build \
             --file ./frontend/eng/docker/dockerfile \
-            --tag ghcr.io/${{ github.repository }}/blogdoft-sbus-client:${{ github.sha }} \
-            --tag ghcr.io/${{ github.repository }}/blogdoft-sbus-client:${IMAGE_TAG} \
-            --tag ghcr.io/${{ github.repository }}/blogdoft-sbus-client:latest \
+            --tag ghcr.io/${{ github.repository }}/developer-toolbox-client:${{ github.sha }} \
+            --tag ghcr.io/${{ github.repository }}/developer-toolbox-client:${IMAGE_TAG} \
+            --tag ghcr.io/${{ github.repository }}/developer-toolbox-client:latest \
             ./frontend/
 
       - name: Push image to GHCR (Frontend)
         run: |
-          docker push ghcr.io/${{ github.repository }}/blogdoft-sbus-client:${{ github.sha }}
-          docker push ghcr.io/${{ github.repository }}/blogdoft-sbus-client:latest
+          docker push ghcr.io/${{ github.repository }}/developer-toolbox-client:${{ github.sha }}
+          docker push ghcr.io/${{ github.repository }}/developer-toolbox-client:latest
 
       - name: Build Docker image (Backend)
         run: |
           docker build \
             --file ./backend/eng/docker/dockerfile \
-            --tag ghcr.io/${{ github.repository }}/blogdoft-sbus-api:${{ github.sha }} \
-            --tag ghcr.io/${{ github.repository }}/blogdoft-sbus-api:${IMAGE_TAG} \
-            --tag ghcr.io/${{ github.repository }}/blogdoft-sbus-api:latest \
+            --tag ghcr.io/${{ github.repository }}/developer-toolbox-api:${{ github.sha }} \
+            --tag ghcr.io/${{ github.repository }}/developer-toolbox-api:${IMAGE_TAG} \
+            --tag ghcr.io/${{ github.repository }}/developer-toolbox-api:latest \
             ./backend/
 
       - name: Push image to GHCR (Backend)
         run: |
-          docker push ghcr.io/${{ github.repository }}/blogdoft-sbus-api:${{ github.sha }}
-          docker push ghcr.io/${{ github.repository }}/blogdoft-sbus-api:latest
+          docker push ghcr.io/${{ github.repository }}/developer-toolbox-api:${{ github.sha }}
+          docker push ghcr.io/${{ github.repository }}/developer-toolbox-api:latest
