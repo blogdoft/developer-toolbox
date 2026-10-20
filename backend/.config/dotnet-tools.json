@@ -2,50 +2,43 @@
   "version": 1,
   "isRoot": true,
   "tools": {
-    "dotnet-format": {
-      "version": "5.1.250801",
-      "commands": [
-        "dotnet-format"
-      ],
-      "rollForward": false
-    },
     "fluentmigrator.dotnet.cli": {
-      "version": "3.3.2",
+      "version": "8.0.1",
       "commands": [
         "dotnet-fm"
       ],
       "rollForward": false
     },
     "dotnet-reportgenerator-globaltool": {
-      "version": "5.3.8",
+      "version": "5.5.11",
       "commands": [
         "reportgenerator"
       ],
       "rollForward": false
     },
     "dotnet-outdated-tool": {
-      "version": "4.6.4",
+      "version": "4.8.1",
       "commands": [
         "dotnet-outdated"
       ],
       "rollForward": false
     },
     "gitversion.tool": {
-      "version": "5.11.1",
+      "version": "6.8.2",
       "commands": [
         "dotnet-gitversion"
       ],
       "rollForward": false
     },
     "husky": {
-      "version": "0.7.2",
+      "version": "0.9.1",
       "commands": [
         "husky"
       ],
       "rollForward": false
     },
     "swashbuckle.aspnetcore.cli": {
-      "version": "7.1.0",
+      "version": "10.3.1",
       "commands": [
         "swagger"
       ],

@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Usage: ./gen-dockerfile.sh [DIR] [DOCKERFILE]
-# Generates an optimized Dockerfile for .NET 9,
+# Generates an optimized Dockerfile for .NET 10,
 # preserving directory structure of .sln and .csproj files.
 # If DOCKERFILE is not provided, defaults to 'Dockerfile'.
 
@@ -37,10 +37,10 @@ popd > /dev/null
 
 # Create the Dockerfile
 cat > "$DOCKERFILE" <<EOF
-# Auto-generated optimized Dockerfile for .NET 9
+# Auto-generated optimized Dockerfile for .NET 10
 
 # Stage 1: build
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS builder
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS builder
 WORKDIR /src
 
 # Copy only solution and project files (preserving structure) to leverage caching
@@ -69,7 +69,7 @@ RUN dotnet publish src/BlogDoFt.DeveloperToolbox.Api/BlogDoFt.DeveloperToolbox.A
     -o /app/publish
 
 # Stage 2: runtime
-FROM mcr.microsoft.com/dotnet/aspnet:9.0-alpine AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine AS runtime
 WORKDIR /app
 
 # Install CA certificates for HTTPS
