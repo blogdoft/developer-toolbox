@@ -1,4 +1,6 @@
 <p-toast></p-toast>
+<p-confirmdialog></p-confirmdialog>
+<app-loading-overlay [visible]="loading"></app-loading-overlay>
 <div class="flex h-full gap-2">
     <!-- Sidebar -->
     <app-topic-list class="topics-bar h-full" (OnEntitySelected)="onSelectEntity($event)"></app-topic-list>
@@ -10,9 +12,28 @@
                 {{ selectedEntity?.name || 'Select an Entity first' }}
                 {{ selectedEntity?.owner?.name ? ' at ' + selectedEntity?.owner?.name : '' }}
             </div>
+            @if (selectedEntity) {
+                <p-accordion class="mb-4">
+                    <p-accordion-panel value="settings">
+                        <p-accordion-header>Settings</p-accordion-header>
+                        <p-accordion-content>
+                            @if (selectedEntity.owner) {
+                                <div class="font-semibold mb-2">Topic: {{ selectedEntity.owner.name }}</div>
+                                <app-json-viewer [data]="selectedEntity.owner.properties ?? {}"></app-json-viewer>
+                            }
+                            <div class="font-semibold mt-4 mb-2">{{ isQueue() ? 'Queue' : 'Subscription' }}: {{ selectedEntity.name }}</div>
+                            <app-json-viewer [data]="selectedEntity.properties ?? {}"></app-json-viewer>
+                            @if (selectedEntity.rules?.length) {
+                                <div class="font-semibold mt-4 mb-2">Rules</div>
+                                <app-json-viewer [data]="selectedEntity.rules"></app-json-viewer>
+                            }
+                        </p-accordion-content>
+                    </p-accordion-panel>
+                </p-accordion>
+            }
             <p-tabs (valueChange)="onTabChange($event)">
                 <p-tablist value="1">
-                    <p-tab value="0" [disabled]="selectedEntity == undefined">Load messages</p-tab>
+                    <p-tab value="0" [disabled]="selectedEntity == undefined">Messages</p-tab>
                     <p-tab value="1" [disabled]="selectedEntity == undefined">Send messages</p-tab>
                 </p-tablist>
                 <p-tabpanels>
@@ -23,7 +44,9 @@
                                     <label for="maxMessages" class="sr-only">Max messages</label>
                                     <p-inputnumber #maxMessagesInput id="maxMessages" [(ngModel)]="maxMessages" min="1" />
                                 </div>
-                                <p-button label="Load" [fluid]="false" [disabled]="!canLoad" (onClick)="load($event)"></p-button>
+                                <p-button label="Peek" icon="pi pi-eye" [fluid]="false" [disabled]="!canLoad" pTooltip="Read without removing" (onClick)="peek()"></p-button>
+                                <p-button label="Load" icon="pi pi-download" severity="warn" [fluid]="false" [disabled]="!canLoad" pTooltip="Read and remove" (onClick)="confirmLoad()"></p-button>
+                                <p-button label="Purge" icon="pi pi-trash" severity="danger" [fluid]="false" [disabled]="!canLoad" pTooltip="Remove all messages" (onClick)="confirmPurge()"></p-button>
                             </div>
                         </div>
                         <div class="flex flex-wrap">
