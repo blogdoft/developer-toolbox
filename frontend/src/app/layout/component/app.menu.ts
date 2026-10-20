@@ -23,7 +23,14 @@ export class AppMenu {
             {
                 label: 'Home',
                 items: [
-                    { label: 'Sbus Emulator Viewer', icon: 'pi pi-fw pi-envelope', routerLink: ['/'] },
+                    {
+                        label: 'Service Bus',
+                        icon: 'pi pi-fw pi-envelope',
+                        items: [
+                            { label: 'Messages', icon: 'pi pi-fw pi-comments', routerLink: ['/'] },
+                            { label: 'Namespace', icon: 'pi pi-fw pi-sitemap', routerLink: ['/pages/namespace'] }
+                        ]
+                    },
                     { label: 'Public Secrets', icon: 'pi pi-fw pi-key', routerLink: ['/pages/public-secrets'] }
                 ]
             }

@@ -18,7 +18,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services
-    .AddControllers()
+    .AddControllers(opts => opts.Filters.Add<NamespaceExceptionFilter>())
     .AddJsonOptions(opts =>
     {
         opts.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
@@ -55,7 +55,12 @@ builder.Services
         var settings = sp.GetRequiredService<IOptions<ServiceBusSettings>>().Value;
         return new ServiceBusAdministrationClient(settings.ConnectionString);
     })
-    .AddSingleton<EntitiesParser>()
+    .AddSingleton<EmulatorNamespaceManager>()
+    .AddSingleton<AdministrationClientNamespaceManager>()
+    .AddSingleton<INamespaceManager>(sp =>
+        sp.GetRequiredService<IOptions<ServiceBusSettings>>().Value.IsEmulator
+            ? sp.GetRequiredService<EmulatorNamespaceManager>()
+            : sp.GetRequiredService<AdministrationClientNamespaceManager>())
     .AddScoped<IServiceBusService, ServiceBusService>()
     .AddSecretsFeature();
 

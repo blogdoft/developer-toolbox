@@ -1,0 +1,133 @@
+<p-toast></p-toast>
+<p-confirmdialog></p-confirmdialog>
+<app-loading-overlay [visible]="loading"></app-loading-overlay>
+<app-entity-form-dialog
+    [visible]="form.visible"
+    [kind]="form.kind"
+    [mode]="form.mode"
+    [entityName]="form.entityName"
+    [parentName]="form.parentName"
+    [initialValues]="form.initialValues"
+    (visibleChange)="onFormVisibleChange($event)"
+    (save)="onSave($event)"
+></app-entity-form-dialog>
+
+<app-rules-dialog
+    [visible]="rulesTarget !== undefined"
+    [topicName]="rulesTarget?.topic ?? ''"
+    [subscriptionName]="rulesTarget?.subscription ?? ''"
+    [rules]="rulesOfTarget"
+    (visibleChange)="rulesTarget = undefined"
+    (changed)="refresh()"
+></app-rules-dialog>
+
+<div class="card">
+    <div class="flex items-center justify-between mb-4">
+        <div class="font-semibold text-xl">Topics</div>
+        <div class="flex gap-2">
+            <p-button icon="pi pi-refresh" severity="secondary" [outlined]="true" label="Refresh" (onClick)="refresh()"></p-button>
+            <p-button icon="pi pi-plus" label="New topic" (onClick)="openCreate('topic')"></p-button>
+        </div>
+    </div>
+    <p-table [value]="topics" dataKey="topicName" [expandedRowKeys]="expandedTopics">
+        <ng-template #header>
+            <tr>
+                <th style="width: 3rem"></th>
+                <th>Name</th>
+                <th>Time to live</th>
+                <th>Subscriptions</th>
+                <th class="text-right">Actions</th>
+            </tr>
+        </ng-template>
+        <ng-template #body let-topic let-expanded="expanded">
+            <tr>
+                <td><p-button type="button" [pRowToggler]="topic" [text]="true" [rounded]="true" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></p-button></td>
+                <td>{{ topic.topicName }}</td>
+                <td>{{ topic.properties.defaultMessageTimeToLive }}</td>
+                <td>{{ topic.subscriptions.length }}</td>
+                <td class="text-right">
+                    <p-button icon="pi pi-plus" label="Subscription" [text]="true" (onClick)="openCreate('subscription', topic)"></p-button>
+                    <p-button icon="pi pi-pencil" [text]="true" [rounded]="true" ariaLabel="Edit topic" (onClick)="openEdit('topic', topic.topicName, topic.properties)"></p-button>
+                    <p-button icon="pi pi-trash" severity="danger" [text]="true" [rounded]="true" ariaLabel="Delete topic" (onClick)="confirmDelete('topic', topic.topicName)"></p-button>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template #expandedrow let-topic>
+            <tr>
+                <td colspan="5">
+                    <p-table [value]="topic.subscriptions" dataKey="name">
+                        <ng-template #header>
+                            <tr>
+                                <th>Subscription</th>
+                                <th>Lock duration</th>
+                                <th>Max delivery count</th>
+                                <th>Time to live</th>
+                                <th>Rules</th>
+                                <th class="text-right">Actions</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template #body let-subscription>
+                            <tr>
+                                <td>{{ subscription.name }}</td>
+                                <td>{{ subscription.properties.lockDuration }}</td>
+                                <td>{{ subscription.properties.maxDeliveryCount }}</td>
+                                <td>{{ subscription.properties.defaultMessageTimeToLive }}</td>
+                                <td>{{ subscription.rules.length }}</td>
+                                <td class="text-right">
+                                    <p-button icon="pi pi-filter" label="Rules" [text]="true" (onClick)="openRules(topic, subscription)"></p-button>
+                                    <p-button icon="pi pi-pencil" [text]="true" [rounded]="true" ariaLabel="Edit subscription" (onClick)="openEdit('subscription', subscription.name, subscription.properties, topic)"></p-button>
+                                    <p-button icon="pi pi-trash" severity="danger" [text]="true" [rounded]="true" ariaLabel="Delete subscription" (onClick)="confirmDelete('subscription', subscription.name, topic)"></p-button>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template #emptymessage>
+                            <tr>
+                                <td colspan="6">No subscriptions.</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template #emptymessage>
+            <tr>
+                <td colspan="5">No topics.</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<div class="card">
+    <div class="flex items-center justify-between mb-4">
+        <div class="font-semibold text-xl">Queues</div>
+        <p-button icon="pi pi-plus" label="New queue" (onClick)="openCreate('queue')"></p-button>
+    </div>
+    <p-table [value]="queues" dataKey="name">
+        <ng-template #header>
+            <tr>
+                <th>Name</th>
+                <th>Lock duration</th>
+                <th>Max delivery count</th>
+                <th>Time to live</th>
+                <th class="text-right">Actions</th>
+            </tr>
+        </ng-template>
+        <ng-template #body let-queue>
+            <tr>
+                <td>{{ queue.name }}</td>
+                <td>{{ queue.properties.lockDuration }}</td>
+                <td>{{ queue.properties.maxDeliveryCount }}</td>
+                <td>{{ queue.properties.defaultMessageTimeToLive }}</td>
+                <td class="text-right">
+                    <p-button icon="pi pi-pencil" [text]="true" [rounded]="true" ariaLabel="Edit queue" (onClick)="openEdit('queue', queue.name, queue.properties)"></p-button>
+                    <p-button icon="pi pi-trash" severity="danger" [text]="true" [rounded]="true" ariaLabel="Delete queue" (onClick)="confirmDelete('queue', queue.name)"></p-button>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template #emptymessage>
+            <tr>
+                <td colspan="5">No queues.</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>

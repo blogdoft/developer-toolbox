@@ -5,8 +5,9 @@ import { MessageService, TreeNode } from 'primeng/api';
 import { MessageModule } from 'primeng/message';
 import { TreeModule, TreeNodeSelectEvent } from 'primeng/tree';
 import { TreeTableModule } from 'primeng/treetable';
+import { catchError, forkJoin, of } from 'rxjs';
 
-import { EntitiesService, Topic } from '../../../services/entities.service';
+import { EntitiesService, Queue, RuleInfo, Topic } from '../../../services/entities.service';
 import { MessageHandlerService } from '../../../shared/services/message-handler.service';
 import { NodeService } from '../../service/node.service';
 
@@ -28,9 +29,12 @@ export class TopicListComponent implements OnInit {
     messageHandler = inject(MessageHandlerService);
 
     ngOnInit(): void {
-        this.entitiesService.getEntities().subscribe({
-            next: (data) => {
-                this.treeValue = this.buildTree(data);
+        forkJoin({
+            topics: this.entitiesService.getEntities(),
+            queues: this.entitiesService.getQueues().pipe(catchError(() => of([] as Queue[])))
+        }).subscribe({
+            next: ({ topics, queues }) => {
+                this.treeValue = this.buildTree(topics, queues);
             },
             error: (err) => this.messageHandler.handleHttpError(err)
         });
@@ -45,9 +49,24 @@ export class TopicListComponent implements OnInit {
         this.OnEntitySelected.emit(event.node.data);
     }
 
-    private buildTree(topics: Topic[]): TreeNode[] {
-        const topicNode = this.buildTopics(topics);
-        return [topicNode];
+    private buildTree(topics: Topic[], queues: Queue[]): TreeNode[] {
+        return [this.buildTopics(topics), this.buildQueues(queues)];
+    }
+
+    private buildQueues(queues: Queue[]): TreeNode {
+        return {
+            key: '1',
+            label: 'Queues',
+            icon: 'pi pi-fw pi-inbox',
+            selectable: false,
+            children: queues.map((q, i) => ({
+                key: `1-${i}`,
+                label: q.name,
+                data: { kind: 'Queue', name: q.name, properties: q.properties },
+                icon: 'pi pi-fw pi-list',
+                leaf: true
+            }))
+        };
     }
 
     private buildTopics(topics: Topic[]): TreeNode {
@@ -59,7 +78,8 @@ export class TopicListComponent implements OnInit {
             children: topics.map((t, i) => {
                 let topicData: EntityNode = {
                     kind: 'Topic',
-                    name: t.topicName
+                    name: t.topicName,
+                    properties: t.properties
                 };
                 return {
                     key: `0-${i}`,
@@ -68,8 +88,8 @@ export class TopicListComponent implements OnInit {
                     selectable: false,
                     children: t.subscriptions.map((s, j) => ({
                         key: `0-${i}-${j}`,
-                        label: s,
-                        data: { kind: 'Subscription', name: s, owner: topicData },
+                        label: s.name,
+                        data: { kind: 'Subscription', name: s.name, properties: s.properties, rules: s.rules, owner: topicData },
                         icon: 'pi pi-fw pi-bell',
                         leaf: true
                     }))
@@ -84,5 +104,7 @@ export class TopicListComponent implements OnInit {
 export interface EntityNode {
     kind: string;
     name: string;
+    properties?: object;
+    rules?: RuleInfo[];
     owner?: EntityNode;
 }

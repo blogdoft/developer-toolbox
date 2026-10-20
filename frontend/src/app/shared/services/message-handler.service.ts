@@ -33,6 +33,11 @@ export class MessageHandlerService {
     }
 
     private getMessageByStatus(err: any): string {
+        // Backend failures (unsupported operation, conflict, ...) carry the reason as ProblemDetails
+        if ([403, 404, 409, 501, 502].includes(err.status) && typeof err.error?.detail === 'string') {
+            return parseProblemDetails(err.error as ProblemDetails);
+        }
+
         switch (err.status) {
             case 400:
                 return parseProblemDetails(err.error as ProblemDetails);

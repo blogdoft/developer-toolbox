@@ -1,0 +1,77 @@
+<p-dialog [header]="'Rules of ' + subscriptionName" [visible]="visible" (visibleChange)="visibleChange.emit($event)" [modal]="true" [style]="{ width: '56rem' }" (onShow)="handleShow()">
+    <app-loading-overlay [visible]="loading"></app-loading-overlay>
+    @if (view === 'list') {
+        <div class="flex justify-end mb-2">
+            <p-button icon="pi pi-plus" label="New rule" (onClick)="newRule()"></p-button>
+        </div>
+        <p-table [value]="rules" dataKey="name">
+            <ng-template #header>
+                <tr>
+                    <th>Name</th>
+                    <th>Filter</th>
+                    <th>Definition</th>
+                    <th>Action</th>
+                    <th class="text-right">Actions</th>
+                </tr>
+            </ng-template>
+            <ng-template #body let-rule>
+                <tr>
+                    <td>{{ rule.name }}</td>
+                    <td>{{ rule.properties.filterType }}</td>
+                    <td>{{ summary(rule) }}</td>
+                    <td>{{ rule.properties.actionExpression }}</td>
+                    <td class="text-right">
+                        <p-button icon="pi pi-pencil" [text]="true" [rounded]="true" ariaLabel="Edit rule" (onClick)="editRule(rule)"></p-button>
+                        <p-button icon="pi pi-trash" severity="danger" [text]="true" [rounded]="true" ariaLabel="Delete rule" (onClick)="confirmDelete(rule)"></p-button>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template #emptymessage>
+                <tr>
+                    <td colspan="5">No rules.</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    } @else {
+        <div class="flex flex-col gap-4">
+            <div class="flex flex-col gap-1">
+                <label for="ruleName" class="font-semibold">Name</label>
+                <input pInputText id="ruleName" [(ngModel)]="ruleName" [disabled]="editing" autocomplete="off" />
+            </div>
+            <div class="flex flex-col gap-1">
+                <span class="font-semibold">Filter</span>
+                <p-selectbutton [options]="filterTypes" [(ngModel)]="values.filterType" [allowEmpty]="false" />
+            </div>
+            @if (values.filterType === 'Sql') {
+                <div class="flex flex-col gap-1">
+                    <label for="sqlExpression" class="font-semibold">SQL expression</label>
+                    <textarea pTextarea id="sqlExpression" rows="3" [(ngModel)]="values.sqlExpression" placeholder="userProp1 = 'value1'"></textarea>
+                </div>
+            }
+            @if (values.filterType === 'Correlation') {
+                @for (field of correlationFields; track field.key) {
+                    <div class="flex flex-col gap-1">
+                        <label [for]="'rule-' + field.key" class="font-semibold">{{ field.label }}</label>
+                        <input pInputText [id]="'rule-' + field.key" [(ngModel)]="values[field.key]" autocomplete="off" />
+                    </div>
+                }
+                <div class="flex flex-col gap-1">
+                    <label for="applicationProperties" class="font-semibold">Application properties</label>
+                    <textarea pTextarea id="applicationProperties" rows="3" [(ngModel)]="applicationPropertiesText" placeholder="one key=value per line"></textarea>
+                </div>
+            }
+            <div class="flex flex-col gap-1">
+                <label for="actionExpression" class="font-semibold">Action (SQL expression, optional)</label>
+                <textarea pTextarea id="actionExpression" rows="2" [(ngModel)]="values.actionExpression" placeholder="SET sys.To = 'Entity'"></textarea>
+            </div>
+        </div>
+    }
+    <ng-template #footer>
+        @if (view === 'form') {
+            <p-button label="Back" severity="secondary" [text]="true" (onClick)="backToList()" />
+            <p-button label="Save" [disabled]="!canSave()" (onClick)="save()" />
+        } @else {
+            <p-button label="Close" severity="secondary" [text]="true" (onClick)="visibleChange.emit(false)" />
+        }
+    </ng-template>
+</p-dialog>

@@ -1,0 +1,42 @@
+<p-dialog [header]="header" [visible]="visible" (visibleChange)="visibleChange.emit($event)" [modal]="true" [style]="{ width: '36rem' }" (onShow)="handleShow()">
+    <div class="flex flex-col gap-4">
+        @if (kind === 'subscription') {
+            <div class="text-sm">Topic: <span class="font-semibold">{{ parentName }}</span></div>
+        }
+        <div class="flex flex-col gap-1">
+            <label for="entityName" class="font-semibold">Name</label>
+            <input pInputText id="entityName" [(ngModel)]="name" [disabled]="mode === 'edit'" autocomplete="off" />
+        </div>
+        @for (field of fields; track field.key) {
+            <div class="flex flex-col gap-1">
+                @switch (field.type) {
+                    @case ('boolean') {
+                        <div class="flex items-center gap-2">
+                            <p-checkbox [inputId]="field.key" [binary]="true" [(ngModel)]="values[field.key]" [disabled]="isDisabled(field)" />
+                            <label [for]="field.key">{{ field.label }}</label>
+                        </div>
+                    }
+                    @case ('number') {
+                        <label [for]="field.key" class="font-semibold">{{ field.label }}</label>
+                        <p-inputnumber [inputId]="field.key" [(ngModel)]="values[field.key]" [useGrouping]="false" [disabled]="isDisabled(field)" />
+                    }
+                    @case ('duration') {
+                        <label [for]="field.key" class="font-semibold">{{ field.label }}</label>
+                        <input pInputText [id]="field.key" [(ngModel)]="values[field.key]" placeholder="ISO 8601, e.g. PT1H or P14D" autocomplete="off" />
+                    }
+                    @default {
+                        <label [for]="field.key" class="font-semibold">{{ field.label }}</label>
+                        <input pInputText [id]="field.key" [(ngModel)]="values[field.key]" autocomplete="off" />
+                    }
+                }
+            </div>
+        }
+        @if (mode === 'edit') {
+            <small>Fields that are fixed at creation cannot be changed.</small>
+        }
+    </div>
+    <ng-template #footer>
+        <p-button label="Cancel" severity="secondary" [text]="true" (onClick)="close()" />
+        <p-button label="Save" [disabled]="!canSave" (onClick)="submit()" />
+    </ng-template>
+</p-dialog>

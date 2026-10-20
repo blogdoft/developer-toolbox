@@ -3,3 +3,18 @@
 @use './assets/layout/layout.scss';
 @use 'primeicons/primeicons.css';
 @use './assets/demo/demo.scss';
+
+/* ngx-json-viewer defaults are tuned for light backgrounds */
+.app-dark {
+    --ngx-json-key: #c4a1f0;
+    --ngx-json-value: #e5e7eb;
+    --ngx-json-separator: #9ca3af;
+    --ngx-json-toggler: #9ca3af;
+    --ngx-json-string: #ff9d9d;
+    --ngx-json-number: #4fd1c5;
+    --ngx-json-boolean: #e07bd0;
+    --ngx-json-date: #63b3ed;
+    --ngx-json-array: #9ca3af;
+    --ngx-json-object: #9ca3af;
+    --ngx-json-function: #9ca3af;
+}
