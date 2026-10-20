@@ -32,6 +32,22 @@ services:
       ACCEPT_EULA: ${ACCEPT_EULA}
       MSSQL_SA_PASSWORD: "${MSSQL_SA_PASSWORD}" # To be filled by user as per policy : https://learn.microsoft.com/en-us/sql/relational-databases/security/strong-passwords?view=sql-server-linux-ver16 
 
+  azurite:
+    container_name: "azurite"
+    image: mcr.microsoft.com/azure-storage/azurite:latest
+    pull_policy: always
+    command: azurite --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost 0.0.0.0 --skipApiVersionCheck --loose
+    volumes:
+      - azurite-data:/data
+    ports:
+      - "10000:10000"
+      - "10001:10001"
+      - "10002:10002"
+    networks:
+      sb-emulator:
+        aliases:
+          - "azurite"
+
   backend:
     container_name: backend
     build:
@@ -45,6 +61,7 @@ services:
       - sb-emulator
     depends_on:
       - emulator
+      - azurite
 
   frontend:
     container_name: frontend
@@ -72,6 +89,9 @@ services:
       - frontend
     ports:
       - "8080:8080"
+
+volumes:
+  azurite-data:
 
 networks:
   sb-emulator:

@@ -31,6 +31,11 @@ export class AppMenu {
                             { label: 'Namespace', icon: 'pi pi-fw pi-sitemap', routerLink: ['/pages/namespace'] }
                         ]
                     },
+                    {
+                        label: 'Azure Storage',
+                        icon: 'pi pi-fw pi-database',
+                        items: [{ label: 'Blobs, Queues and Tables', icon: 'pi pi-fw pi-folder-open', routerLink: ['/pages/storage'] }]
+                    },
                     { label: 'Public Secrets', icon: 'pi pi-fw pi-key', routerLink: ['/pages/public-secrets'] }
                 ]
             }

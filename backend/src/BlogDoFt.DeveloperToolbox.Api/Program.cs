@@ -4,6 +4,7 @@ using BlogDoFt.DeveloperToolbox.Api.Features.Secrets;
 using BlogDoFt.DeveloperToolbox.Api.Features.ServiceBus;
 using BlogDoFt.DeveloperToolbox.Api.Features.ServiceBus.Impl;
 using BlogDoFt.DeveloperToolbox.Api.Features.ServiceBus.Models;
+using BlogDoFt.DeveloperToolbox.Api.Features.Storage;
 using BlogDoFt.DeveloperToolbox.Api.Models;
 using FluentMigrator.Runner;
 using Microsoft.Extensions.Options;
@@ -29,7 +30,8 @@ builder.Services
     .AddOpenApi();
 
 builder.Services
-    .Configure<ServiceBusSettings>(builder.Configuration.GetSection("ServiceBus"));
+    .Configure<ServiceBusSettings>(builder.Configuration.GetSection("ServiceBus"))
+    .Configure<StorageSettings>(builder.Configuration.GetSection("Storage"));
 
 builder.Services
     .AddSingleton<IDbConnection>(sp =>
@@ -62,7 +64,8 @@ builder.Services
             ? sp.GetRequiredService<EmulatorNamespaceManager>()
             : sp.GetRequiredService<AdministrationClientNamespaceManager>())
     .AddScoped<IServiceBusService, ServiceBusService>()
-    .AddSecretsFeature();
+    .AddSecretsFeature()
+    .AddStorageFeature();
 
 builder.Services.AddCors(opts =>
     opts.AddDefaultPolicy(policy =>
