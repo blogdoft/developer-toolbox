@@ -42,9 +42,7 @@ services:
     volumes:
       - "${CONFIG_PATH}:${DeveloperToolboxConfigPath}"
     networks:
-      sb-emulator:
-        aliases:
-          - "sqledge"
+      - sb-emulator
     depends_on:
       - emulator
 
@@ -54,9 +52,7 @@ services:
       context: ../../frontend/
       dockerfile: ./eng/docker/dockerfile
     networks:
-      sb-emulator:
-        aliases:
-          - "sqledge"
+      - sb-emulator
     depends_on:
       - backend
     ports:
@@ -70,9 +66,7 @@ services:
     mem_limit: 128m
     cpus: 0.5
     networks:
-      sb-emulator:
-        aliases:
-          - "sqledge"
+      - sb-emulator
     depends_on:
       - backend
       - frontend
