@@ -26,6 +26,10 @@ The app provides a `docker-compose` setup to bootstrap everything you need. Pay 
 
 You need to configure `./eng/docker/.env`, where you define the place of `config.json` (the one that defines the fake namespace used by the emulator). For more details about this and emulator settings in general, check [this Microsoft manual](https://learn.microsoft.com/en-us/azure/service-bus-messaging/overview-emulator).
 
+#### Azurite (Azure Storage)
+
+The `docker-compose` setup also starts [Azurite](https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azurite), and the **Storage** menu lets you browse and manage its blob containers, queues and tables. By default the backend uses the development storage connection string (`Storage__ConnectionString` in `backend.env`). To manage a real Azure Storage account instead, replace it with the account's connection string. No other change is needed, since the same Azure SDK clients talk to both.
+
 #### Developer Toolbox (Backend)
 
 Modify `./eng/docker/backend.env` with the necessary values to run the backend. The template file includes some hints. For security reasons, we don't include a working connection string. Adjust accordingly for your setup.
@@ -89,6 +93,10 @@ A aplicação dispõe de um docker compose, onde é possível levantar tudo que 
 #### Service Bus Emulator
 
 É necessário que você configure o arquivo `./eng/docker/.env`. Nele você deve especificar, por exemplo, onde está o arquivo que contém a configuração do "namespace" fictício, utilizado pelo emulador. Para maiores detalhes sobre esse arquivo e configurações em geral do Service Bus Emulator, acesse [este manual da Microsoft](https://learn.microsoft.com/en-us/azure/service-bus-messaging/overview-emulator).
+
+#### Azurite (Azure Storage)
+
+O `docker-compose` também sobe o [Azurite](https://learn.microsoft.com/pt-br/azure/storage/common/storage-use-azurite), e o menu **Storage** permite navegar e gerenciar seus containers de blob, filas e tabelas. Por padrão o backend usa a connection string de desenvolvimento (`Storage__ConnectionString` no `backend.env`). Para gerenciar uma conta real do Azure Storage, basta trocá-la pela connection string da conta. Nenhuma outra mudança é necessária, pois os mesmos clientes do SDK da Azure atendem os dois casos.
 
 #### Developer Toolbox (Backend)
 

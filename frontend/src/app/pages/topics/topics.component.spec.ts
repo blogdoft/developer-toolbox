@@ -1,4 +1,7 @@
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MessageService } from 'primeng/api';
 
 import { TopicsComponent } from './topics.component';
 
@@ -8,7 +11,8 @@ describe('TopicsComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [TopicsComponent]
+            imports: [TopicsComponent],
+            providers: [provideHttpClient(), provideHttpClientTesting(), MessageService]
         }).compileComponents();
 
         fixture = TestBed.createComponent(TopicsComponent);
