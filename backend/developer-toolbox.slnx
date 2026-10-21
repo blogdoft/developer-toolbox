@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/BlogDoFt.DeveloperToolbox.Api/BlogDoFt.DeveloperToolbox.Api.csproj" />
+  </Folder>
+  <Folder Name="/__tests__/">
+    <Project Path="__tests__/BlogDoFt.DeveloperToolbox.Api/BlogDoFt.DeveloperToolbox.Api.csproj" />
+  </Folder>
+</Solution>

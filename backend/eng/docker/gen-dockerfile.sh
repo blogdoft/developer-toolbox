@@ -3,7 +3,7 @@ set -euo pipefail
 
 # Usage: ./gen-dockerfile.sh [DIR] [DOCKERFILE]
 # Generates an optimized Dockerfile for .NET 10,
-# preserving directory structure of .sln and .csproj files.
+# preserving directory structure of .slnx and .csproj files.
 # If DOCKERFILE is not provided, defaults to 'Dockerfile'.
 
 SEARCH_DIR="${1:-.}"
@@ -20,7 +20,7 @@ pushd "$SEARCH_DIR" > /dev/null
 
 # Prepare COPY commands preserving directory structure: 'COPY <src> <src>'
 COPY_SLN_CMDS=$( 
-  find . -type f -name '*.sln' -print \
+  find . -type f -name '*.slnx' -print \
     | sed 's|^\./||' \
     | while IFS= read -r file; do printf 'COPY %s %s
 ' "$file" "$file"; done

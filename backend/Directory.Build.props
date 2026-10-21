@@ -1,0 +1,26 @@
+<Project>
+
+  <!--
+    Centralizes the code-quality analyzer packages and the shared stylecop.json every project in
+    this repo uses. MSBuild imports this file automatically for every project under this
+    directory - no per-csproj wiring needed. Package versions are pinned here only (never
+    per-project) so every project always analyzes with the exact same ruleset.
+  -->
+  <ItemGroup>
+    <PackageReference Include="Roslynator.Analyzers" Version="5.0.0" />
+    <PackageReference Include="Roslynator.CodeFixes" Version="5.0.0" />
+    <PackageReference Include="Roslynator.Formatting.Analyzers" Version="5.0.0" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.556" />
+    <PackageReference Include="SonarAnalyzer.CSharp" Version="10.34.0.3385" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)stylecop.json" />
+  </ItemGroup>
+
+  <!-- Every project under src exposes its internals to the test assembly named "<AssemblyName>.Tests". -->
+  <ItemGroup Condition="$(MSBuildProjectDirectory.StartsWith('$(MSBuildThisFileDirectory)src'))">
+    <InternalsVisibleTo Include="$(AssemblyName).Tests" />
+  </ItemGroup>
+
+</Project>

@@ -5,7 +5,7 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS builder
 WORKDIR /src
 
 # Copy only solution and project files (preserving structure) to leverage caching
-COPY developer-toolbox.sln developer-toolbox.sln
+COPY developer-toolbox.slnx developer-toolbox.slnx
 COPY __tests__/BlogDoFt.DeveloperToolbox.Api/BlogDoFt.DeveloperToolbox.Api.csproj __tests__/BlogDoFt.DeveloperToolbox.Api/BlogDoFt.DeveloperToolbox.Api.csproj
 COPY src/BlogDoFt.DeveloperToolbox.Api/BlogDoFt.DeveloperToolbox.Api.csproj src/BlogDoFt.DeveloperToolbox.Api/BlogDoFt.DeveloperToolbox.Api.csproj
 

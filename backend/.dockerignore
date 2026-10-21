@@ -1,7 +1,7 @@
 ./**/*.*
 !./**/*.csproj
 !./**/*.cs
-!./**/*.sln
+!./**/*.slnx
 !.editorconfig
 !stylecop.json
 !Directory.Build.props
